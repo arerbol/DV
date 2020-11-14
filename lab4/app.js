@@ -11,7 +11,7 @@ svg.attr("height",height);
 svg.attr("transform",'translate(100,50)');
 
 svg.call(tip);
-console.log("dsds")
+
 d3.json("data.json").then((data)=>{
   console.log(data);
   var maxYScale = d3.max(
@@ -25,37 +25,32 @@ d3.json("data.json").then((data)=>{
   dict = {}
   for(let i = 0; i<data.length; i++) {
         for(let j = 0; j < data[i].length; j++) {
-          if (data[i][j] in dict) {
-            dict[data[i][j]] += 1
+          let key = data[i][j]
+          if (key in dict) {
+            dict[key] += 1
           } else {
-            dict[data[i][j]] = 1
+            dict[key] = 1
           }
         }
   }
 
-  console.log(data.length)
-
   arr = []
   for(let i = 0; i<data.length; i++) {
     var d = {}
-      console.log(i)
     for(let j = 0; j<data[i].length; j++) {
-      var key = data[i][j]
-      d[key] = dict[key]
+      var k = data[i][j]
+      d[k] = dict[k]
     }
-      console.log("otti")
     var items = Object.keys(d).map(function(key) {
       return [key, d[key]];});
     items.sort(function(first, second) {
       return second[1] - first[1];});
     var a = []
-    for(let k = 0; k<items.length-1; k++) {
-      a.push(items[k][0])
+    for(let m = 0; m<items.length; m++) {
+      a.push(items[m][0])
     }
     arr.push(a)
   }
-
-
 
   for(let i = 0; i<arr.length-1; i++) {
     for(let j = 0; j < arr[i].length; j++) {
@@ -70,13 +65,12 @@ d3.json("data.json").then((data)=>{
     }
   }
 
-  console.log(links);
 
 
 
   var sozyvs = svg
   .selectAll("g")
-  .data(data)
+  .data(arr)
   .enter()
   .append("g")
   .attr("class","sozyv")
@@ -92,8 +86,7 @@ d3.json("data.json").then((data)=>{
   function onmouseover(d,i,e) {
     d3.select(this)
     .attr('class',"hl");
-    tip.show(d, e[i]);
-
+    tip.show(d + '<br>Количество созывов : ' + dict[d], e[i]);
   }
 
   sozyvs
